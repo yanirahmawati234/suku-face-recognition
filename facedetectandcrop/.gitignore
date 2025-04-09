@@ -1,0 +1,10 @@
+# Created by venv; see https://docs.python.org/3/library/venv.html
+# Ignore virtual environment folder
+venv/
+
+# Ignore Python bytecode files
+*.pyc
+
+# Ignore system files (e.g., macOS .DS_Store, Windows Thumbs.db)
+.DS_Store
+Thumbs.db
