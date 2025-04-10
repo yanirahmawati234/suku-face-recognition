@@ -2,14 +2,6 @@ import cv2
 import numpy as np
 
 def rotate_image(image, angle=15):
-    """
-    Melakukan rotasi gambar dengan sudut tertentu (default ±15 derajat).
-    Args:
-        image: Gambar input (NumPy array)
-        angle: Sudut rotasi dalam derajat (positif atau negatif)
-    Returns:
-        Gambar yang telah dirotasi
-    """
     height, width = image.shape[:2]
     center = (width // 2, height // 2)
     rotation_matrix = cv2.getRotationMatrix2D(center, angle, 1.0)
@@ -17,13 +9,6 @@ def rotate_image(image, angle=15):
     return rotated_image
 
 def flip_image(image):
-    """
-    Melakukan horizontal flip pada gambar.
-    Args:
-        image: Gambar input (NumPy array)
-    Returns:
-        Gambar yang telah diflip secara horizontal
-    """
     flipped_image = cv2.flip(image, 1)
     return flipped_image
 
