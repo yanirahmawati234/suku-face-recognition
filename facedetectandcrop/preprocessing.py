@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 from mtcnn import MTCNN
 
-# ===== AUGMENTATION FUNCTIONS =====
 def rotate_image(image, angle=15):
     height, width = image.shape[:2]
     center = (width // 2, height // 2)
@@ -21,7 +20,6 @@ def add_gaussian_noise(image):
     noise = np.random.normal(0, 5, image.shape).astype(np.uint8)
     return cv2.add(image, noise)
 
-# ===== FACE CROP FUNCTION =====
 def crop_faces(folder_path):
     detector = MTCNN()
     success_dir = "Dataset/Berhasil"
@@ -63,7 +61,6 @@ def crop_faces(folder_path):
 
                     print(f"[X] Tidak ada wajah terdeteksi pada: {file_path}")
 
-# ===== AUGMENTATION PROCESS =====
 def preprocess_images(folder_path):
     output_base = "Augmented"
     for root, _, files in os.walk(folder_path):
@@ -82,25 +79,20 @@ def preprocess_images(folder_path):
                 base_name = os.path.splitext(file)[0]
                 ext = os.path.splitext(file)[1]
 
-                # Rotate
                 rotated = rotate_image(img)
                 cv2.imwrite(os.path.join(target_folder, f"rotated_{base_name}{ext}"), rotated)
 
-                # Flip
                 flipped = flip_image(img)
                 cv2.imwrite(os.path.join(target_folder, f"flipped_{base_name}{ext}"), flipped)
 
-                # Brightness & Contrast
                 bc_adjusted = adjust_brightness_contrast(img, alpha=1.0, beta=30)
                 cv2.imwrite(os.path.join(target_folder, f"brightness&contrast_1.0_{base_name}{ext}"), bc_adjusted)
 
-                # Gaussian Noise
                 noisy = add_gaussian_noise(img)
                 cv2.imwrite(os.path.join(target_folder, f"noise_{base_name}{ext}"), noisy)
 
                 print(f"[✓] Preprocessing selesai untuk: {file_path}")
 
-# ===== SIMPLE UI =====
 def main():
     print("=== Program Crop & Preprocessing Gambar ===")
     print("1. Crop wajah dari gambar")
