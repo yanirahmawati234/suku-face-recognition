@@ -1,6 +1,8 @@
 import os
 import cv2
 import numpy as np
+import random
+import shutil
 from mtcnn import MTCNN
 
 def rotate_image(image, angle=15):
@@ -93,11 +95,48 @@ def preprocess_images(folder_path):
 
                 print(f"[✓] Preprocessing selesai untuk: {file_path}")
 
+def split_dataset(folder_path):
+    output_base = "DatasetSplit"
+    train_ratio = 0.7
+    val_ratio = 0.15
+    test_ratio = 0.15
+
+    all_files = []
+    for root, _, files in os.walk(folder_path):
+        for file in files:
+            if file.lower().endswith(('.jpg', '.jpeg', '.png')):
+                full_path = os.path.join(root, file)
+                rel_path = os.path.relpath(full_path, folder_path)
+                all_files.append(rel_path)
+
+    random.shuffle(all_files)
+    total = len(all_files)
+    train_end = int(total * train_ratio)
+    val_end = train_end + int(total * val_ratio)
+
+    train_files = all_files[:train_end]
+    val_files = all_files[train_end:val_end]
+    test_files = all_files[val_end:]
+
+    for subset_name, subset_files in [("Training", train_files), ("Validation", val_files), ("Testing", test_files)]:
+        for file in subset_files:
+            src_path = os.path.join(folder_path, file)
+
+            # Ubah path menjadi nama file flat: Jawa/Yasin/senyum.jpg => jawa_yasin_senyum.jpg
+            file_flat_name = file.replace(os.sep, '_').lower()
+
+            dst_path = os.path.join(output_base, subset_name, file_flat_name)
+            os.makedirs(os.path.dirname(dst_path), exist_ok=True)
+            shutil.copy2(src_path, dst_path)
+
+    print(f"[✓] Dataset berhasil dibagi: {len(train_files)} Training, {len(val_files)} Validation, {len(test_files)} Testing")
+
 def main():
     print("=== Program Crop & Preprocessing Gambar ===")
-    print("1. Crop wajah dari gambar")
-    print("2. Preprocessing gambar hasil crop")
-    pilihan = input("Masukkan pilihan (1/2): ")
+    print("1. Deteksi wajah dan Crop Gambar")
+    print("2. Preprocessing gambar")
+    print("3. Split dataset")
+    pilihan = input("Masukkan pilihan (1/2/3): ")
 
     if pilihan == '1':
         folder = input("Masukkan folder yang ingin diproses (misal: Dataset/Jawa/Yasin): ")
@@ -106,6 +145,10 @@ def main():
     elif pilihan == '2':
         folder = input("Masukkan folder hasil crop (misal: Dataset/Berhasil/Jawa/Yasin): ")
         preprocess_images(folder)
+
+    elif pilihan == '3':
+        folder = input("Masukkan folder yang ingin di-split (misal: Augmented/Jawa/Yasin): ")
+        split_dataset(folder)
 
     else:
         print("Pilihan tidak valid.")
