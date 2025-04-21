@@ -1,7 +1,5 @@
 # suku-face-recognition
 
-Proyek ini adalah aplikasi **pengenalan wajah berdasarkan suku** menggunakan model deep learning yang telah dilatih menggunakan **pre-trained** Model VGG16 dan MobileNetV2.
-
 ## 🧠 Model
 
 Berikut adalah model yang sudah dilatih menggunakan **VGG16** dan **MobileNetV2**. Untuk menerapkan model ini, silakan ikuti langkah-langkah berikut:
