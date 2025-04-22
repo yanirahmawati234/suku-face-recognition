@@ -5,9 +5,8 @@ import numpy as np
 import tensorflow as tf
 from mtcnn import MTCNN
 
-# Load model
-vgg_model = tf.keras.models.load_model('vgg16_finetuned_final.h5')
-mobilenet_model = tf.keras.models.load_model('mobilenetv2_finetuned_final.h5')
+# Load hanya MobileNetV2 model
+mobilenet_model = tf.keras.models.load_model('model/mobilenetv2_final.h5')
 labels = ['Jawa', 'Melayu', 'Sunda']
 
 # Inisialisasi face detector
@@ -31,11 +30,9 @@ def preprocess_face(image):
     else:
         return None, None
 
-def ensemble_predict(img_array, weight_vgg=0.4, weight_mobilenet=0.6):
-    vgg_preds = vgg_model.predict(img_array)[0]
-    mobilenet_preds = mobilenet_model.predict(img_array)[0]
-    combined_preds = (weight_vgg * vgg_preds) + (weight_mobilenet * mobilenet_preds)
-    return combined_preds
+def predict(img_array):
+    preds = mobilenet_model.predict(img_array)[0]
+    return preds
 
 def detect_faces(image):
     return detector.detect_faces(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))

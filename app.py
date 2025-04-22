@@ -1,12 +1,10 @@
-# app.py
-
 import streamlit as st
 import cv2
 import numpy as np
 import pandas as pd
 from PIL import Image
 
-import suku_identification as backend
+import suku_identification as backend  # Ubah sesuai nama file back-end kamu kalau perlu
 
 st.title("Deteksi Suku/Etnis Real-time dan Upload Gambar")
 choice = st.radio("Pilih mode deteksi", ('Webcam', 'Upload Gambar'))
@@ -28,7 +26,7 @@ if choice == 'Upload Gambar':
             st.subheader("Wajah yang Diproses")
             st.image(cropped_face, caption="Wajah yang Di-crop", use_column_width=True)
 
-            preds = backend.ensemble_predict(preprocessed_face)
+            preds = backend.predict(preprocessed_face)  # ✅ Ganti ke predict
             class_idx = np.argmax(preds)
             confidence = preds[class_idx]
 
@@ -66,7 +64,7 @@ elif choice == 'Webcam':
                     face_crop = frame[y:y+h, x:x+w]
 
                     face_input = backend.preprocess_multiple_faces(face_crop)
-                    preds = backend.ensemble_predict(face_input)
+                    preds = backend.predict(face_input)  # ✅ Ganti ke predict
                     preds_to_display = preds
 
                     class_idx = np.argmax(preds)
