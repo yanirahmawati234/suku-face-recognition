@@ -11,10 +11,16 @@ import torch
 from facenet_pytorch import MTCNN, InceptionResnetV1
 import cv2
 
-# Inisialisasi model dan detektor wajah
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 mtcnn = MTCNN(image_size=160, margin=0, device=device)
-model = InceptionResnetV1(pretrained='vggface2').eval().to(device)
+# model = InceptionResnetV1(pretrained='vggface2').eval().to(device)
+# print(f"[INFO] Using device: {device}")
+model = InceptionResnetV1(classify=False, pretrained=None).to(device)
+# model.load_state_dict(torch.load("finetuned_facenet.pth", map_location=device))
+state_dict = torch.load("Models/finetuned_facenet.pth", map_location=device)
+filtered_state_dict = {k: v for k, v in state_dict.items() if not k.startswith("logits")}
+model.load_state_dict(filtered_state_dict, strict=False)
+model.eval()
 
 def extract_embedding(img_path):
     img = Image.open(img_path)
@@ -185,7 +191,7 @@ def save_example_visuals(pairs_with_paths, threshold, save_dir="examples"):
         plt.close()
 
 if __name__ == "__main__":
-    DATASET_PATH = "Dataset/Cropped/Jawa"
+    DATASET_PATH = "Dataset/Cropped"
 
     print("[INFO] Memuat embedding dari dataset...")
     embeddings, labels, image_paths = load_embeddings_from_dataset(DATASET_PATH)
@@ -200,7 +206,6 @@ if __name__ == "__main__":
     print("[INFO] Visualisasi distribusi skor similarity...")
     plot_similarity_distribution(pairs)
 
-    # Tambahkan path untuk visualisasi
     pairs_with_paths = []
     for (emb1, emb2, label), (idx1, idx2) in zip(pairs, index_pairs):
         path1 = image_paths[idx1]

@@ -7,12 +7,17 @@ from PIL import Image
 from sklearn.metrics.pairwise import cosine_similarity
 import matplotlib.pyplot as plt
 
-# Inisialisasi detektor wajah dan model FaceNet
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 mtcnn = MTCNN(image_size=160, margin=0, device=device)
-model = InceptionResnetV1(pretrained='vggface2').eval().to(device)
+# model = InceptionResnetV1(pretrained='vggface2').eval().to(device)
+# print(f"[INFO] Using device: {device}")
+model = InceptionResnetV1(classify=False, pretrained=None).to(device)
+# model.load_state_dict(torch.load("finetuned_facenet.pth", map_location=device))
+state_dict = torch.load("Models/finetuned_facenet.pth", map_location=device)
+filtered_state_dict = {k: v for k, v in state_dict.items() if not k.startswith("logits")}
+model.load_state_dict(filtered_state_dict, strict=False)
+model.eval()
 
-# Fungsi untuk ekstraksi embedding wajah dari path gambar
 def extract_embedding(image_path):
     img = Image.open(image_path)
     face = mtcnn(img)
@@ -22,11 +27,9 @@ def extract_embedding(image_path):
     face_embedding = model(face.unsqueeze(0).to(device))
     return face_embedding.detach().cpu().numpy()
 
-# Fungsi untuk menghitung similarity
 def calculate_similarity(emb1, emb2):
     return cosine_similarity(emb1, emb2)[0][0]
 
-# Fungsi visualisasi
 def visualize_comparison(img_path1, img_path2, similarity_score, threshold=0.8):
     match = "MATCH" if similarity_score >= threshold else "NOT MATCH"
 
@@ -48,7 +51,6 @@ def visualize_comparison(img_path1, img_path2, similarity_score, threshold=0.8):
     plt.tight_layout()
     plt.show()
 
-# Main program
 def main():
     print("=== FACE SIMILARITY CHECK ===")
     path1 = input("Masukkan path gambar 1: ")
