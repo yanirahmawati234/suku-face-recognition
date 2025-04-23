@@ -7,7 +7,7 @@ import os
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 # ===== 1. Configuration =====
-DATASET_DIR = 'dataset_split'
+DATASET_DIR = 'dataset/split'
 IMG_SIZE = (224, 224)
 BATCH_SIZE = 32
 
@@ -15,7 +15,7 @@ BATCH_SIZE = 32
 val_test_aug = ImageDataGenerator(rescale=1./255)
 
 test_gen = val_test_aug.flow_from_directory(
-    os.path.join(DATASET_DIR, 'cropped/test'),
+    os.path.join(DATASET_DIR, 'test'),
     target_size=IMG_SIZE,
     batch_size=BATCH_SIZE,
     class_mode='categorical',

@@ -13,9 +13,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # ===== Config =====
-DATASET_TRAIN_DIR = 'dataset_ekspresi/train'
-DATASET_VAL_DIR = 'dataset_ekspresi/val'
-DATASET_TEST_DIR = 'dataset_ekspresi/test'
+DATASET_TRAIN_DIR = 'dataset/split/train'
+DATASET_VAL_DIR = 'dataset/split/val'
+DATASET_TEST_DIR = 'dataset/split/test'
 IMG_SIZE = (224, 224)
 BATCH_SIZE = 32
 EPOCHS = 15  
